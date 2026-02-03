@@ -243,10 +243,7 @@
     <h1>Will you be my Valentine? 💘</h1>
     <p class="subtitle" id="subtitle">I have a small question… and I hope the answer is YES 😊</p>
 
-    <div class="pill" title="Personalize the name">
-      <span>To:</span>
-      <input id="nameInput" placeholder="Type a name…" maxlength="28" />
-    </div>
+   
 
     <section class="bubble">
       <p id="message">
@@ -265,7 +262,7 @@
     </section>
 
     <div class="result" id="result">
-      <strong id="resultTitle">YAY!!! 🎉</strong>
+      <strong id="resultTitle">🎉YAY!!!🎉 I love you so much my sweet heart 💖 </strong>
       <div class="small" id="resultText">Now send me a message: <strong>"I said YES 💘"</strong></div>
       <div class="small">Tip: Take a screenshot 😄</div>
     </div>
@@ -379,9 +376,7 @@
       subtitle.textContent = "Okay… now it’s official 😍";
       result.style.display = "block";
 
-      const who = nameSlot.textContent || "you";
-      resultTitle.textContent = `YAY, ${who}! 🎉`;
-      resultText.innerHTML = `Now send me a message: <strong>"I said YES 💘"</strong>`;
+     
 
       // hide "No"
       noBtn.style.display = "none";
