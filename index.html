@@ -31,8 +31,6 @@
         radial-gradient(1000px 700px at 80% 30%, #fff5, transparent 55%),
         linear-gradient(135deg, var(--bg1), var(--bg2));
       overflow:hidden;
-
-      /* iPhone safe area */
       padding: env(safe-area-inset-top) env(safe-area-inset-right)
                env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
@@ -84,34 +82,15 @@
       font-size: 30px;
       letter-spacing: -0.02em;
       line-height: 1.1;
+      text-align:center;
     }
 
     .subtitle{
-      margin: 8px 0 0;
+      margin: 10px 0 0;
       opacity: .85;
       font-size: 14px;
       line-height: 1.45;
-    }
-
-    .pill{
-      margin-top: 14px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: rgba(255,255,255,.65);
-      display:flex;
-      gap:10px;
-      align-items:center;
-      font-size: 14px;
-    }
-
-    .pill input{
-      border:none;
-      outline:none;
-      background:transparent;
-      font:inherit;
-      width: 100%;
-      padding: 2px 0;
+      text-align:center;
     }
 
     .bubble{
@@ -120,6 +99,7 @@
       padding: 14px;
       background: rgba(255,255,255,.72);
       border: 1px solid rgba(0,0,0,.06);
+      text-align:center;
     }
     .bubble p{
       margin: 0;
@@ -136,32 +116,25 @@
       border: 1px solid rgba(0,0,0,.06);
       overflow: hidden;
       padding: 12px;
+      display:grid;
+      place-items:center;
     }
 
-    .btns{
-      position: absolute;
-      inset: 12px;
-      display:flex;
-      flex-direction: column;
-      gap: 12px;
-      align-items: stretch;
-      justify-content: flex-end;
-    }
-
-    button, input{
-      touch-action: manipulation;
-    }
+    /* Buttons are NOT full width now */
+    button, input{ touch-action: manipulation; }
 
     button{
       appearance:none;
       border:none;
       cursor:pointer;
       font-weight: 800;
-      padding: 14px 16px;
+      padding: 12px 18px;
       border-radius: 16px;
       font-size: 16px;
-      min-height: 52px;   /* better for thumbs */
-      width: 100%;
+      min-height: 48px;
+      width: auto;              /* ✅ not full width */
+      min-width: 160px;         /* ✅ consistent size */
+      max-width: 220px;
       transition: transform .08s ease, filter .2s ease;
       box-shadow: 0 10px 25px rgba(0,0,0,.12);
       user-select:none;
@@ -172,9 +145,8 @@
     .yes{ background: #22c55e; color:white; }
     .no{
       background: #f43f5e; color:white;
-      position:absolute; /* we will move it inside .actions */
+      position:absolute;
       left: 12px; top: 12px;
-      width: calc(100% - 24px); /* initial full width */
     }
 
     .result{
@@ -184,14 +156,9 @@
       background: rgba(255,255,255,.75);
       border: 1px solid rgba(0,0,0,.06);
       display:none;
+      text-align:center;
     }
     .result strong{ font-size: 18px; }
-    .small{
-      opacity:.85;
-      font-size: 13px;
-      margin-top: 6px;
-      line-height: 1.5;
-    }
 
     .footer{
       margin-top: 12px;
@@ -220,12 +187,12 @@
     }
     .toast.show{ opacity:1; transform: translateX(-50%) translateY(-4px); }
 
-    /* Very small phones */
+    /* Small phones */
     @media (max-width: 360px){
       .card{ padding: 16px; }
       h1{ font-size: 28px; }
       .actions{ height: 220px; }
-      button{ min-height: 50px; }
+      button{ min-height: 46px; min-width: 150px; }
     }
 
     /* Landscape phones (short height) */
@@ -243,31 +210,21 @@
     <h1>Will you be my Valentine? 💘</h1>
     <p class="subtitle" id="subtitle">I have a small question… and I hope the answer is YES 😊</p>
 
-    <div class="pill" title="Personalize the name">
-      <span>To:</span>
-      <input id="nameInput" placeholder="Type a name…" maxlength="28" />
-    </div>
-
     <section class="bubble">
-      <p id="message">
-        Hey <span id="nameSlot">you</span>… I was wondering if you’d make this Valentine’s Day extra special with me.
+      <p>
+        I was wondering if you’d make this Valentine’s Day extra special with me.
         <br><br>
         Choose wisely 😇
       </p>
     </section>
 
     <section class="actions" id="arena">
-      <div class="btns">
-        <button class="yes" id="yesBtn">Yes 💖</button>
-        <!-- "No" is absolute and will dodge -->
-        <button class="no" id="noBtn">No 🙃</button>
-      </div>
+      <button class="yes" id="yesBtn">Yes 💖</button>
+      <button class="no" id="noBtn">No 🙃</button>
     </section>
 
     <div class="result" id="result">
-      <strong id="resultTitle">YAY!!! 🎉</strong>
-      <div class="small" id="resultText">Now send me a message: <strong>"I said YES 💘"</strong></div>
-      <div class="small">Tip: Take a screenshot 😄</div>
+      <strong>Yayy!! I love you sweetheart 💖</strong>
     </div>
 
     <div class="footer">
@@ -279,17 +236,13 @@
   <div class="toast" id="toast">💘</div>
 
   <script>
-    const nameInput = document.getElementById("nameInput");
-    const nameSlot  = document.getElementById("nameSlot");
-    const yesBtn    = document.getElementById("yesBtn");
-    const noBtn     = document.getElementById("noBtn");
-    const arena     = document.getElementById("arena");
-    const toast     = document.getElementById("toast");
-    const confetti  = document.getElementById("confetti");
-    const result    = document.getElementById("result");
-    const subtitle  = document.getElementById("subtitle");
-    const resultTitle = document.getElementById("resultTitle");
-    const resultText  = document.getElementById("resultText");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn  = document.getElementById("noBtn");
+    const arena  = document.getElementById("arena");
+    const toast  = document.getElementById("toast");
+    const confetti = document.getElementById("confetti");
+    const result = document.getElementById("result");
+    const subtitle = document.getElementById("subtitle");
 
     let noCount = 0;
 
@@ -301,16 +254,8 @@
 
     function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
-    function setName(){
-      const n = (nameInput.value || "").trim();
-      nameSlot.textContent = n ? n : "you";
-    }
-    nameInput.addEventListener("input", setName);
-
     function moveNoButton(){
       const pad = 12;
-
-      // Ensure button is measured correctly
       const maxX = arena.clientWidth - noBtn.offsetWidth - pad;
       const maxY = arena.clientHeight - noBtn.offsetHeight - pad;
 
@@ -339,17 +284,13 @@
       }
     }
 
-    // Init for mobile: make "No" absolute inside arena and place it once
     window.addEventListener("load", () => {
       noBtn.style.position = "absolute";
-      // After layout is ready, randomize position
       setTimeout(moveNoButton, 50);
     });
 
     const dodge = (e) => {
       noCount++;
-
-      // prevent click after touch on mobile
       if (e.cancelable) e.preventDefault();
 
       showToast(
@@ -358,14 +299,12 @@
         "Just press YES 😭💘"
       );
 
-      // make YES bigger gradually
-      const scale = clamp(1 + noCount * 0.06, 1, 1.6);
+      const scale = clamp(1 + noCount * 0.06, 1, 1.55);
       yesBtn.style.transform = `scale(${scale})`;
 
       moveNoButton();
     };
 
-    // Mobile + desktop robust dodge triggers
     noBtn.addEventListener("touchstart", dodge, { passive:false });
     noBtn.addEventListener("pointerdown", dodge);
     noBtn.addEventListener("pointerenter", dodge);
@@ -379,18 +318,9 @@
       subtitle.textContent = "Okay… now it’s official 😍";
       result.style.display = "block";
 
-      const who = nameSlot.textContent || "you";
-      resultTitle.textContent = `YAY, ${who}! 🎉`;
-      resultText.innerHTML = `Now send me a message: <strong>"I said YES 💘"</strong>`;
-
-      // hide "No"
       noBtn.style.display = "none";
-
-      // bring result into view on mobile
       result.scrollIntoView({ behavior:"smooth", block:"nearest" });
     });
   </script>
 </body>
 </html>
-
-
