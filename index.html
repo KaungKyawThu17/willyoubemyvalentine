@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Will you be my Valentine? 💘</title>
+  <meta name="description" content="A cute interactive Valentine page." />
+  <style>
+    :root{
+      --bg1:#ffdde1;
+      --bg2:#ee9ca7;
+      --card:#ffffffcc;
+      --text:#2b2b2b;
+      --yes:#16a34a;
+      --no:#ef4444;
+      --shadow: 0 20px 60px rgba(0,0,0,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 20% 20%, #fff6, transparent 60%),
+                  radial-gradient(1000px 700px at 80% 30%, #fff5, transparent 55%),
+                  linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+    .hearts{
+      position:fixed; inset:0; pointer-events:none; opacity:.35;
+      background:
+        radial-gradient(circle at 10% 20%, #fff 0 2px, transparent 3px),
+        radial-gradient(circle at 70% 10%, #fff 0 2px, transparent 3px),
+        radial-gradient(circle at 80% 70%, #fff 0 2px, transparent 3px),
+        radial-gradient(circle at 30% 80%, #fff 0 2px, transparent 3px);
+      filter: blur(.3px);
+    }
+    .card{
+      width:min(720px, 92vw);
+      background:var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.6);
+      box-shadow: var(--shadow);
+      border-radius: 28px;
+      padding: 28px;
+      position:relative;
+    }
+    .top{
+      display:flex; gap:18px; align-items:center; justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(28px, 5vw, 44px);
+      letter-spacing:-.02em;
+    }
+    .subtitle{
+      margin:6px 0 0;
+      opacity:.85;
+      font-size: clamp(14px, 2.2vw, 18px);
+      line-height:1.4;
+    }
+    .pill{
+      padding:10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: rgba(255,255,255,.65);
+      display:flex; gap:10px; align-items:center;
+      font-size: 14px;
+    }
+    .pill input{
+      border:none; outline:none;
+      background:transparent;
+      font:inherit;
+      width: 170px;
+      padding:2px 0;
+    }
+    .stage{
+      margin-top:20px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:18px;
+      align-items:center;
+    }
+    @media (max-width: 720px){
+      .stage{grid-template-columns:1fr}
+    }
+    .bubble{
+      border-radius: 22px;
+      padding:18px;
+      background: rgba(255,255,255,.7);
+      border: 1px solid rgba(0,0,0,.06);
+    }
+    .bubble p{margin:0; font-size:16px; line-height:1.6}
+    .actions{
+      position:relative;
+      height: 210px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(0,0,0,.06);
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+      padding: 12px;
+    }
+    .btns{
+      display:flex; gap:12px; align-items:center; justify-content:center;
+      flex-wrap:wrap;
+      width:100%;
+    }
+    button{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      font-weight: 700;
+      padding: 12px 18px;
+      border-radius: 16px;
+      font-size: 16px;
+      transition: transform .08s ease, filter .2s ease;
+      box-shadow: 0 10px 25px rgba(0,0,0,.12);
+      user-select:none;
+    }
+    button:active{transform: translateY(1px) scale(.99)}
+    .yes{background: #22c55e; color:white}
+    .no{background: #f43f5e; color:white; position:absolute}
+    .yes:hover{filter: brightness(.98)}
+    .no:hover{filter: brightness(.98)}
+    .footer{
+      margin-top:14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      opacity:.85;
+      font-size: 13px;
+    }
+    .toast{
+      position: fixed;
+      left:50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      background: rgba(20,20,20,.85);
+      color:#fff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.25);
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    .toast.show{opacity:1; transform: translateX(-50%) translateY(-4px)}
+    .confetti{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      overflow:hidden;
+    }
+    .piece{
+      position:absolute;
+      top:-10px;
+      width:10px; height:14px;
+      opacity:.9;
+      border-radius: 3px;
+      animation: fall linear forwards;
+    }
+    @keyframes fall{
+      to{
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 1;
+      }
+    }
+    .result{
+      margin-top:16px;
+      border-radius: 22px;
+      padding: 16px 18px;
+      background: rgba(255,255,255,.75);
+      border: 1px solid rgba(0,0,0,.06);
+      display:none;
+    }
+    .result strong{font-size:18px}
+    .result a{
+      color:#111;
+      font-weight:700;
+    }
+    .small{
+      opacity:.8;
+      font-size: 13px;
+      margin-top:6px;
+      line-height:1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" aria-hidden="true"></div>
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <main class="card">
+    <div class="top">
+      <div>
+        <h1>Will you be my Valentine? 💘</h1>
+        <p class="subtitle" id="subtitle">I have a small question… and I hope the answer is YES 😊</p>
+      </div>
+
+      <div class="pill" title="Personalize the name">
+        <span>To:</span>
+        <input id="nameInput" placeholder="Your crush name" maxlength="28" />
+      </div>
+    </div>
+
+    <section class="stage">
+      <div class="bubble">
+        <p id="message">
+          Hey <span id="nameSlot">you</span>… I was wondering if you’d make this Valentine’s Day extra special with me.
+          <br /><br />
+          Choose wisely 😇
+        </p>
+      </div>
+
+      <div class="actions" id="arena">
+        <div class="btns">
+          <button class="yes" id="yesBtn">Yes 💖</button>
+          <button class="no" id="noBtn">No 🙃</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="result" id="result">
+      <strong id="resultTitle">YAY!!! 🎉</strong>
+      <div class="small" id="resultText">
+        Send this screenshot to me 😉
+      </div>
+      <div class="small">
+        Optional: add your contact link (Instagram/FB) in code.
+      </div>
+    </div>
+
+    <div class="footer">
+      <span>Tip: Try pressing “No” 😅</span>
+      <span>Made with ❤️</span>
+    </div>
+  </main>
+
+  <div class="toast" id="toast">💘</div>
+
+  <script>
+    const nameInput = document.getElementById("nameInput");
+    const nameSlot = document.getElementById("nameSlot");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const arena = document.getElementById("arena");
+    const toast = document.getElementById("toast");
+    const confetti = document.getElementById("confetti");
+    const result = document.getElementById("result");
+    const subtitle = document.getElementById("subtitle");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
+
+    let noCount = 0;
+
+    function showToast(text){
+      toast.textContent = text;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1200);
+    }
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function moveNoButton(){
+      // move inside arena bounds
+      const rect = arena.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      const pad = 12;
+      const maxX = rect.width - btnRect.width - pad;
+      const maxY = rect.height - btnRect.height - pad;
+
+      const x = Math.random() * maxX + pad/2;
+      const y = Math.random() * maxY + pad/2;
+
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    }
+
+    function popConfetti(){
+      const colors = ["#ff4d6d","#ffd166","#06d6a0","#118ab2","#8338ec","#ff006e","#ffffff"];
+      const pieces = 120;
+
+      for(let i=0;i<pieces;i++){
+        const el = document.createElement("div");
+        el.className = "piece";
+        el.style.left = Math.random()*100 + "vw";
+        el.style.background = colors[Math.floor(Math.random()*colors.length)];
+        el.style.transform = `translateY(-10px) rotate(${Math.random()*360}deg)`;
+        el.style.animationDuration = (Math.random()*1.2 + 1.2) + "s";
+        el.style.animationDelay = (Math.random()*0.15) + "s";
+        el.style.width = (Math.random()*8 + 6) + "px";
+        el.style.height = (Math.random()*10 + 8) + "px";
+        confetti.appendChild(el);
+        el.addEventListener("animationend", () => el.remove());
+      }
+    }
+
+    function setName(){
+      const n = (nameInput.value || "").trim();
+      nameSlot.textContent = n ? n : "you";
+    }
+
+    nameInput.addEventListener("input", setName);
+
+    // Start "No" in a random spot so it looks playful
+    window.addEventListener("load", () => {
+      // Make the "No" absolute within arena
+      noBtn.style.position = "absolute";
+      moveNoButton();
+    });
+
+    // When user tries to click/tap "No", it escapes
+    const dodge = (e) => {
+      noCount++;
+      showToast(noCount < 3 ? "Hehe… try again 😜" :
+                noCount < 6 ? "Not allowed 😇" :
+                "Just press YES 😭💘");
+
+      // make YES bigger gradually
+      const scale = clamp(1 + noCount * 0.06, 1, 1.55);
+      yesBtn.style.transform = `scale(${scale})`;
+
+      moveNoButton();
+      e.preventDefault();
+    };
+
+    noBtn.addEventListener("mouseenter", dodge);
+    noBtn.addEventListener("click", dodge);
+    noBtn.addEventListener("touchstart", dodge, {passive:false});
+
+    yesBtn.addEventListener("click", () => {
+      popConfetti();
+      showToast("YAY!!! 💖");
+
+      subtitle.textContent = "Okay… now it’s official 😍";
+      result.style.display = "block";
+      resultTitle.textContent = `YAY, ${nameSlot.textContent}! 🎉`;
+      resultText.innerHTML =
+        `Now send me a message: <strong>"I said YES 💘"</strong>`;
+
+      // Freeze "No"
+      noBtn.style.display = "none";
+
+      // Optional: auto-scroll result into view on mobile
+      result.scrollIntoView({behavior:"smooth", block:"nearest"});
+    });
+  </script>
+</body>
+</html>
